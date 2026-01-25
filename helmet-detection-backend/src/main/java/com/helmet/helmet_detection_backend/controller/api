@@ -1,0 +1,38 @@
+POST http://localhost:8080/api/detections
+
+{
+  "cameraId": "CAM-01",
+  "helmetDetected": true,
+  "confidenceScore": 0.92,
+  "imagePath": "/images/sample1.jpg"
+}
+
+
+------------------
+GET http://localhost:8080/api/detections
+
+SELECT * FROM detection_logs;
+------------------------------------
+upload :
+POST http://localhost:8080/api/detections/upload
+upload new:
+POST http://localhost:8080/api/detections/upload
+
+-----------------------
+
+dashboard API's
+
+
+Dashboard Summary
+GET /api/dashboard/summary
+{
+  "totalDetections": 120,
+  "helmetDetected": 85,
+  "noHelmetDetected": 35
+}
+
+Detection Table (Pagination)
+GET /api/dashboard/detections?page=0&size=10
+
+Filter (Helmet / No Helmet)
+GET /api/dashboard/detections/filter?helmetDetected=false
