@@ -1,3 +1,4 @@
-opencv-python
 ultralytics
+opencv-python
 requests
+numpy
