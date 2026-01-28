@@ -36,3 +36,25 @@ GET /api/dashboard/detections?page=0&size=10
 
 Filter (Helmet / No Helmet)
 GET /api/dashboard/detections/filter?helmetDetected=false
+
+
+-----------------
+Test Using Postman / Thunder Client
+AI / Camera → Backend Integration (WORKING CONFIRMATION)
+
+post http://localhost:8080/api/detections
+
+in headers add : Content-Type: application/json
+body: 
+{
+
+  "cameraId": "SITE_CAM_01",
+  "helmetDetected": false,
+  "imageUrl": "http://localhost:8080/images/test_no_helmet.jpg"
+}
+
+SELECT * FROM detection_log ORDER BY detected_at DESC;
+
+
+
+

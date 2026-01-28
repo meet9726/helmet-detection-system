@@ -1,6 +1,7 @@
 import axios from "axios";
+import { environment } from "../environment/environment";
 
-const API_BASE = "http://localhost:8080/api/dashboard";
+const API_BASE = environment().apiUrl + "/dashboard";
 
 export const getSummary = () =>
   axios.get(`${API_BASE}/summary`);

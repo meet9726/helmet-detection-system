@@ -8,15 +8,27 @@ import SummaryCards from "../components/SummaryCards";
 import HelmetChart from "../components/HelmetChart";
 import DetectionTable from "../components/DetectionTable";
 import ImageUpload from "../components/ImageUpload";
+import { connectSocket, disconnectSocket, playSound  } from "../Service/socketService"
 
 const Dashboard = () => {
 
   const [summary, setSummary] = useState({});
   const [detections, setDetections] = useState([]);
+  const [alerts, setAlerts] = useState([]);
 
-  useEffect(() => {
-    loadDashboard();
-  }, []);
+ useEffect(() => {
+  // Load dashboard on mount
+  loadDashboard();
+  // Connect WebSocket
+  connectSocket((alert) => {
+    console.log("🚨 NO HELMET detected on " + alert.cameraId);
+    setAlerts(prev => [alert, ...prev]);
+    playSound();
+    loadDashboard(); // refresh on alert
+  });
+  
+  return () => disconnectSocket();
+}, []);
 
   const loadDashboard = async () => {
     const summaryRes = await getSummary();
@@ -33,7 +45,36 @@ const Dashboard = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-4">Helmet Detection Dashboard</h2>
+      {/* <h2 className="mb-4">Helmet Detection Dashboard</h2> */}
+      <small className="text-muted">
+        Auto-refreshing every 5 seconds
+        </small>
+
+
+  <div style={{ padding: "20px" }}>
+      <h2>🚧 Helmet Detection Dashboard</h2>
+
+      {alerts.length === 0 ? (
+        <p>No alerts yet</p>
+      ) : (
+        alerts.map((a, i) => (
+          <div
+            key={i}
+            style={{
+              border: "1px solid red",
+              padding: "10px",
+              marginTop: "10px",
+              background: "#ffe5e5"
+            }}
+          >
+            <b>🚨 No Helmet Detected</b>
+            <div>Camera: {a.cameraId}</div>
+            <div>Time: {a.detectedAt}</div>
+          </div>
+        
+        ))
+      )}
+    </div>
 
       <SummaryCards summary={summary} />
 

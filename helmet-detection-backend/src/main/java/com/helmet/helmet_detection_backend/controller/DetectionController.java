@@ -9,10 +9,11 @@ import com.helmet.helmet_detection_backend.entity.DetectionLog;
 import com.helmet.helmet_detection_backend.service.DetectionService;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/detection")
+@RequestMapping("/api")
 public class DetectionController {
 
     private final DetectionService detectionService;
@@ -21,7 +22,7 @@ public class DetectionController {
         this.detectionService = detectionService;
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/detection/upload")
     public DetectionLog uploadImage(
     		  @RequestParam("file") MultipartFile file,
     	        @RequestParam("cameraId") String cameraId) throws Exception {
@@ -49,5 +50,14 @@ public class DetectionController {
                 cameraId,
                 "/uploads/" + fileName
         );
+    }
+    
+    @PostMapping("/detection")
+    public DetectionLog createDetection(
+            @RequestBody DetectionLog detection) {
+
+        detection.setDetectedAt(LocalDateTime.now());
+        return detectionService.SaveCreateDetection(detection);
+        
     }
 }

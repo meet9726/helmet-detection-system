@@ -13,7 +13,7 @@ import com.helmet.helmet_detection_backend.service.FileStorageService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/detections")
+@RequestMapping("/api")
 @CrossOrigin(origins = "*") // For React later
 public class DetectionLogController {
 
@@ -30,7 +30,7 @@ public class DetectionLogController {
     }
 
     // Health Test API
-    @GetMapping("/health")
+    @GetMapping("/detections/health")
     public String healthCheck() {
         return "Helmet Detection Backend is running 🚀";
     }
@@ -70,7 +70,7 @@ public class DetectionLogController {
 //        }
 //    }
     
-    @PostMapping("/upload")
+    @PostMapping("/detections/upload")
     public ResponseEntity<?> uploadAndDetect(
             @RequestParam("file") MultipartFile file,
             @RequestParam("cameraId") String cameraId) {

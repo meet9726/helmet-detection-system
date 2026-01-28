@@ -1,0 +1,94 @@
+Helmet Detection System – Completed Steps Summary
+================================================
+
+STEP-1: Spring Boot Project Setup
+--------------------------------
+- Created Spring Boot project with Web, JPA, WebSocket
+- Database configured (PostgreSQL/MySQL)
+- Application starts successfully
+
+Status: WORKING
+
+
+STEP-2: Database & Entity Setup
+-------------------------------
+Entity: DetectionLog
+Fields:
+- id
+- cameraId
+- helmetDetected
+- imageUrl
+- detectedAt
+
+Repository:
+JpaRepository<DetectionLog, Long>
+
+Status: WORKING
+
+
+STEP-3: Detection REST API
+-------------------------
+API: POST /api/detections
+
+Request Body:
+{
+  "cameraId": "CAM-01",
+  "helmetDetected": false,
+  "imageUrl": "img1.jpg"
+}
+
+Function:
+- Saves detection record into database
+
+Status: WORKING
+
+
+STEP-4: Helmet Detection Validation
+----------------------------------
+Logic:
+helmetDetected == false → violation
+
+Java Method:
+isHelmetDetected()
+
+Status: WORKING
+
+
+STEP-5: WebSocket Alerts
+-----------------------
+Endpoint:
+/ws
+
+Topic:
+/topic/alerts
+
+Triggered when helmetDetected == false
+
+Technology:
+- Spring WebSocket
+- SimpMessagingTemplate
+
+Status: WORKING
+
+
+STEP-6: React Dashboard UI
+-------------------------
+Features:
+- Dashboard page
+- Live alerts
+- Toast notifications
+- Optional alert sound
+
+WebSocket:
+- SockJS + STOMP
+- Subscribed to /topic/alerts
+
+Status: WORKING
+
+
+Completed Summary
+-----------------
+Backend APIs: WORKING
+WebSocket Alerts: WORKING
+Frontend Dashboard: WORKING
+

@@ -29,6 +29,12 @@ public class DetectionLog {
     
     @Column(name = "image_url")
     private String imageUrl;
+    
+    
+    public boolean isHelmetDetected() {
+        return helmetDetected;
+    }
+
 
     // Constructors
     public DetectionLog() {}

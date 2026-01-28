@@ -11,8 +11,9 @@ import com.helmet.helmet_detection_backend.repository.DetectionLogRepository;
 import com.helmet.helmet_detection_backend.service.DashboardService;
 
 @RestController
-@RequestMapping("/api/dashboard")
+@RequestMapping("/api")
 @CrossOrigin(origins = "*")
+
 public class DashboardController {
 
     private final DashboardService dashboardService;
@@ -26,13 +27,13 @@ public class DashboardController {
     }
 
     // 🔹 Summary Cards API
-    @GetMapping("/summary")
+    @GetMapping("/dashboard/summary")
     public DashboardSummaryDTO getSummary() {
         return dashboardService.getSummary();
     }
 
     // 🔹 Detection List (Paginated)
-    @GetMapping("/detections")
+    @GetMapping("/dashboard/detections")
     public Page<DetectionLog> getDetections(
     		 @RequestParam(value = "page", defaultValue = "0") int page,
     	        @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -41,7 +42,7 @@ public class DashboardController {
     }
 
     // 🔹 Filter: Helmet / No Helmet
-    @GetMapping("/detections/filter")
+    @GetMapping("/dashboard/detections/filter")
     public Page<DetectionLog> filterByHelmet(
     		@RequestParam(value ="helmetDetected" , defaultValue = "false") Boolean helmetDetected) {
 
