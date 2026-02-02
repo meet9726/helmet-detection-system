@@ -7,6 +7,12 @@ const ImageUpload = ({ onUpload }) => {
 
   const uploadImage = async () => {
     const formData = new FormData();
+
+    if(file == null) {
+      alert("Please select a file to upload.");
+      document.getElementsByClassName("file")[0].focus();
+      return;
+    }
     formData.append("file", file);
     formData.append("cameraId", "CAM-01");
 
@@ -23,7 +29,7 @@ const ImageUpload = ({ onUpload }) => {
       <h5>Upload Detection Image</h5>
       <input
         type="file"
-        className="form-control mb-2"
+        className="form-control mb-2 file"
         onChange={e => setFile(e.target.files[0])}
       />
       <button

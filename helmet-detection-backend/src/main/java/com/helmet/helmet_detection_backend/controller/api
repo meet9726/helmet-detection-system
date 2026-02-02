@@ -55,6 +55,14 @@ body:
 
 SELECT * FROM detection_log ORDER BY detected_at DESC;
 
+post - ADMIN/CUSTOMER
+http://localhost:8080/api/auth/create-user
+{
+  "username": "meet",
+  "password": "Meet@123",
+  "role": "ADMIN"
+}
+
 
 
 
