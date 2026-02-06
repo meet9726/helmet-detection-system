@@ -1,6 +1,10 @@
 package com.helmet.helmet_detection_backend.controller;
 
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,17 +39,32 @@ public class UserController {
 	private JWTUtills jwtUtil;
 	
 	@PostMapping("/login")
-	public String login(@RequestBody LoginRequest req) {
+	public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest req) {
 
-	    User user = repo.findByUsername(req.getUsername())
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+		 Optional<User> userOpt = repo.findByUsername(req.getUsername());
+		    if (userOpt.isEmpty()) {
+//		        Map<String, String> body = Collections.singletonMap("Error", "User not found");
+		        Map<String, Object> resp = new HashMap<>();
+			    resp.put("status", HttpStatus.OK);
+			    resp.put("error", "User not found"); 
+		        return ResponseEntity.ok(resp); // status 200 with error object
+		    }
 
-	    if (!encoder.matches(req.getPassword(), user.getPassword())) {
-	        throw new RuntimeException("Invalid credentials");
-	    }
+		    User user = userOpt.get();
+		    if (!encoder.matches(req.getPassword(), user.getPassword())) {
+		        Map<String, String> body = Collections.singletonMap("Error", "Invalid credentials");
+		        Map<String, Object> resp = new HashMap<>();
+			    resp.put("status", HttpStatus.OK);
+			    resp.put("error", "Invalid credentials");
+			    return ResponseEntity.ok(resp);
+		    }
 
-	    return jwtUtil.generateToken(user.getUsername(), user.getRole());
+		    String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
+		    Map<String, Object> resp = new HashMap<>();
+		    resp.put("token", token);
+		    return ResponseEntity.ok(resp);
 	}
+	
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/create-user")

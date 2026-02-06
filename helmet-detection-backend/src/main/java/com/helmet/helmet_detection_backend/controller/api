@@ -63,6 +63,16 @@ http://localhost:8080/api/auth/create-user
   "role": "ADMIN"
 }
 
+POST /api/auth/login
+{
+  "username": "customer1",
+  "password": "pass123"
+}
+
+
+>git add .
+>git commit -m "Initial commit: React frontend + Spring Boot backend"
+>git push origin main
 
 
 
