@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {  getSummary,
   getDetections,
@@ -11,10 +12,33 @@ import ImageUpload from "../components/ImageUpload";
 import { connectSocket, disconnectSocket, playSound  } from "../Service/socketService"
 
 const Dashboard = () => {
+  const navigate = useNavigate();
 
   const [summary, setSummary] = useState({});
   const [detections, setDetections] = useState([]);
   const [alerts, setAlerts] = useState([]);
+
+  const handleLogout = async () => {
+
+      const token = sessionStorage.getItem('token');
+    
+    try {
+        await fetch('http://localhost:8080/api/auth/logout', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+    } finally {
+        // Always remove token from client
+        sessionStorage.removeItem('token');
+        navigate('/login');
+        // Disconnect WebSocket
+       disconnectSocket();
+    }   
+  };
 
  useEffect(() => {
   // Load dashboard on mount
@@ -45,36 +69,21 @@ const Dashboard = () => {
 
   return (
     <div className="container mt-4">
-      {/* <h2 className="mb-4">Helmet Detection Dashboard</h2> */}
+      {/* Header with Logout Button */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ margin: 0 }}>🚧 Helmet Detection Dashboard</h2>
+        <button 
+          className="btn btn-outline-danger"
+          onClick={handleLogout}
+        >
+        </button>
+      </div>
       <small className="text-muted">
         Auto-refreshing every 5 seconds
         </small>
 
 
-  <div style={{ padding: "20px" }}>
-      <h2>🚧 Helmet Detection Dashboard</h2>
 
-      {alerts.length === 0 ? (
-        <p>No alerts yet</p>
-      ) : (
-        alerts.map((a, i) => (
-          <div
-            key={i}
-            style={{
-              border: "1px solid red",
-              padding: "10px",
-              marginTop: "10px",
-              background: "#ffe5e5"
-            }}
-          >
-            <b>🚨 No Helmet Detected</b>
-            <div>Camera: {a.cameraId}</div>
-            <div>Time: {a.detectedAt}</div>
-          </div>
-        
-        ))
-      )}
-    </div>
 
       <SummaryCards summary={summary} />
 

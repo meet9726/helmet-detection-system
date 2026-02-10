@@ -1,65 +1,4 @@
 
-// import Footer from './Footer';
-
-// const Login  =() =>{
-  
-// const handleLogin = () => {
-//     window.location.href = '/dashboard';
-// }
-// return ( 
-//    <>
-
-//    <section className="hero">
-//     <div className="hero-content">
-
-//       {/* left section */}
-//       <div className="hero-text">
-//          <div
-//         initial={{ opacity: 0, scale: 0.9 }}
-//         animate={{ opacity: 1, scale: 1 }}
-//         transition={{ duration: 0.6 }}
-//         className="w-full max-w-md bg-gray-900/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-gray-800"
-//       >
-//         <h1 className="text-3xl font-bold text-center text-white mb-2">
-//           Helmet Detection System
-//         </h1>
-//         <p className="text-center text-gray-400 mb-8">
-//           Secure Site Safety Monitoring
-//         </p>
-//       </div>
-//       </div>
-
-//       {/* right section */}
-//       <div className="signup-card">
-//         {/* <h3>Helmet Detection<br /></h3> */}
-
-      
-//         <input type="email" placeholder="Email" />
-//         <input type="password" placeholder="Password" />
-       
-
-//         <label className="checkbox">
-//           <input type="checkbox" />
-//           <label> I agree to Terms & Privacy Policy </label>
-//         </label>
-
-//         <button className="btn-submit" onClick={handleLogin}>GET STARTED</button>
-
-//         <div className="social-login">
-//           <span>or sign in using</span>
-//           <div className="icons">
-//             <div className="icon">G</div>
-//             <div className="icon">in</div>
-//           </div>
-//         </div>
-//       </div>
-
-//     </div>
-//   </section><Footer /></>
-//       )
-// }
-
-// export default Login;
 
 
  import { useState, useEffect } from 'react';
@@ -73,19 +12,44 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const token = sessionStorage.getItem('token');
-  //   debugger;
-  //   if (token) {
-  //     navigate('/dashboard');
-  //   }
-  // }, [navigate]);
+  
   
   const [userName , setusername] = useState("");
   const [password, setpassword] = useState("");
+  const [confirmPassword, setconfirmPassword] = useState("");
+  const [view , setView] = useState(false);
 
  // ...existing code...
-  const handleLogin = async () => {
+  const handleLogin = async (lable) => {
+    if(lable === "signup"){
+       if (userName === "" || password === "") {
+      alert("Please enter both username and password.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert("Confirm password does not match.");
+      return;
+    }
+
+    try {
+      const res = await axios.post(`http://localhost:8080/api/auth/create-user`, { username: userName, password: password , role: "CUSTOMER"});
+      const data = res.data;
+
+      if (data && data.error) {
+        alert(data.error);
+        return;
+      }
+
+      alert("Registration successful! Please sign in.");
+    setView(false);
+
+    } catch (err) {
+      alert(err?.response?.data?.Error || err.message || "Login failed");
+    }
+
+
+    }else{
     if (userName === "" || password === "") {
       alert("Please enter both username and password.");
       return;
@@ -112,6 +76,16 @@ const Login = () => {
     } catch (err) {
       alert(err?.response?.data?.Error || err.message || "Login failed");
     }
+  }
+  }
+
+  const changeToSignUp = () => {
+    setView(true);
+
+  }
+
+  const changeToSignin = () => {
+    setView(false);
   }
 // ...existing code...
 
@@ -172,7 +146,7 @@ const Login = () => {
           </div>
 
           {/* Right Section - Login Card */}
-          <div className="login-card">
+          <div className="login-card" style={{ display: view ? "none" : "block" }}>
             <div className="login-header">
               <div className="login-icon">
                 <Shield />
@@ -181,7 +155,7 @@ const Login = () => {
               <p className="login-subtitle">Sign in to access your dashboard</p>
             </div>
 
-            <form className="login-form" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+            <form className="login-form" onSubmit={(e) => { e.preventDefault(); handleLogin(""); }}>
               <div className="form-group">
                 <label className="form-label">Email Address</label>
                 <input 
@@ -207,11 +181,11 @@ const Login = () => {
                   <input type="checkbox" />
                   <span>Remember me</span>
                 </label>
-                <a href="#" className="forgot-link">Forgot password?</a>
+                <a href="" className="forgot-link">Forgot password?</a>
               </div>
 
               <button type="submit" className="btn-submit">
-                Sign In to Dashboard
+                Login
               </button>
 
               {/* <div className="divider">
@@ -238,11 +212,64 @@ const Login = () => {
 
               <p className="signup-link">
                 Don't have an account?{' '}
-                <a href="#">Sign up now</a>
+                <a href="" onClick= { () => changeToSignUp() }>Sign up now</a>
               </p>
             </form>
           </div>
 
+<div className="login-card" style={{ display: view ? "block" : "none" }}>
+            <div className="login-header">
+              <div className="login-icon">
+                <Shield />
+              </div>
+              <h2 className="login-title">Welcome Back</h2>
+              <p className="login-subtitle">Sign in to access your dashboard</p>
+            </div>
+
+            <form className="login-form" onSubmit={(e) => { e.preventDefault(); handleLogin("signup"); }}>
+              <div className="form-group">
+                <label className="form-label">Email Address</label>
+                <input 
+                  type="" 
+                  placeholder="Enter your email"
+                  className="form-input"
+                    onChange={e => setusername(e.target.value)}
+                />
+              </div>
+
+<div className="form-group">
+                <label className="form-label">Password</label>
+                <input 
+                  type="password" 
+                  placeholder="Enter your password"
+                  className="form-input"
+                   onChange={e => setpassword(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Confirm Password</label>
+                <input 
+                  type="password" 
+                  placeholder="Enter your confirmPassword"
+                  className="form-input"
+                   onChange={e => setconfirmPassword(e.target.value)}
+                />
+              </div>
+
+             
+
+              <button type="submit" onClick= { () => register() } className="btn-submit">
+                Register
+              </button>
+
+            
+
+              <p className="signup-link">
+                Have an account?{' '}
+                <a href="#" onClick= { () => changeToSignin() }>Sign in</a>
+              </p>
+            </form>
+          </div>
         </div>
 
        <Footer />

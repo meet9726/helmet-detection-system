@@ -1,0 +1,78 @@
+POST http://localhost:8080/api/detections
+
+{
+  "cameraId": "CAM-01",
+  "helmetDetected": true,
+  "confidenceScore": 0.92,
+  "imagePath": "/images/sample1.jpg"
+}
+
+
+------------------
+GET http://localhost:8080/api/detections
+
+SELECT * FROM detection_logs;
+------------------------------------
+upload :
+POST http://localhost:8080/api/detections/upload
+upload new:
+POST http://localhost:8080/api/detections/upload
+
+-----------------------
+
+dashboard API's
+
+
+Dashboard Summary
+GET /api/dashboard/summary
+{
+  "totalDetections": 120,
+  "helmetDetected": 85,
+  "noHelmetDetected": 35
+}
+
+Detection Table (Pagination)
+GET /api/dashboard/detections?page=0&size=10
+
+Filter (Helmet / No Helmet)
+GET /api/dashboard/detections/filter?helmetDetected=false
+
+
+-----------------
+Test Using Postman / Thunder Client
+AI / Camera → Backend Integration (WORKING CONFIRMATION)
+
+post http://localhost:8080/api/detections
+
+in headers add : Content-Type: application/json
+body: 
+{
+
+  "cameraId": "SITE_CAM_01",
+  "helmetDetected": false,
+  "imageUrl": "http://localhost:8080/images/test_no_helmet.jpg"
+}
+
+SELECT * FROM detection_log ORDER BY detected_at DESC;
+
+post - ADMIN/CUSTOMER
+http://localhost:8080/api/auth/create-user
+{
+  "username": "meet",
+  "password": "Meet@123",
+  "role": "ADMIN"
+}
+
+POST /api/auth/login
+{
+  "username": "customer1",
+  "password": "pass123"
+}
+
+
+>git add .
+>git commit -m "Initial commit: React frontend + Spring Boot backend"
+>git push origin main
+
+
+
