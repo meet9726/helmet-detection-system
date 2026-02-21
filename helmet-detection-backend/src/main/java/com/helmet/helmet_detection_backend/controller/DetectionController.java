@@ -1,6 +1,8 @@
 package com.helmet.helmet_detection_backend.controller;
 
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,6 +12,9 @@ import com.helmet.helmet_detection_backend.service.DetectionService;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -23,7 +28,7 @@ public class DetectionController {
     }
 
     @PostMapping("/detection/upload")
-    public DetectionLog uploadImage(
+    public ResponseEntity<Map<String, Object>> uploadImage(
     		  @RequestParam("file") MultipartFile file,
     	        @RequestParam("cameraId") String cameraId) throws Exception {
 
@@ -32,24 +37,51 @@ public class DetectionController {
     	    }
     	 
     	 String contentType = file.getContentType();
-    	 if (contentType == null || !contentType.startsWith("image/")) {
-    	     throw new IllegalArgumentException("Only image files are allowed");
-    	 }
+    	 if (contentType == null || 
+    		        (!contentType.startsWith("image/") && !contentType.startsWith("video/"))) {
+    		        throw new IllegalArgumentException("Only image and video files are allowed");
+    		    }
     	 
-        String fileName =
-                UUID.randomUUID() + "_" + file.getOriginalFilename();
+    	 
+    	 String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+    	// Optional: separate folders
+//    	    String uploadDir = FileUploadConfig.UPLOAD_DIR;
+    	 String baseDir = System.getProperty("user.dir"); 
+    	 String uploadDir = baseDir + File.separator + "uploads" + File.separator;
+    	    
+    	 if (contentType.startsWith("video/")) {
+    	        uploadDir += "videos" + File.separator;
+    	    } else {
+    	        uploadDir += "images" + File.separator;
+    	    }
 
        
         
-        File dest = new File(FileUploadConfig.UPLOAD_DIR + fileName);
-        file.transferTo(dest);
-        
-        
+    	 File directory = new File(uploadDir);
+    	    if (!directory.exists()) {
+    	        directory.mkdirs();
+    	    }
 
-        return detectionService.processDetection(
-                cameraId,
-                "/uploads/" + fileName
-        );
+    	    File dest = new File(uploadDir + fileName);
+    	    
+    	    file.transferTo(dest);
+        
+        
+    	    Map<String, Object> resp = new HashMap<>();
+    	    DetectionLog dl = detectionService.processDetection(
+    	            cameraId,
+    	            "/uploads/" + (contentType.startsWith("video/") ? "videos/" : "images/") + fileName
+    	    );
+        
+       
+    	    if(dl == null) {
+    	    	resp.put("status", HttpStatus.OK.value());
+    		    resp.put("message", "Nothing detect");
+    	    }else {
+			    resp.put("status", HttpStatus.OK.value());
+			    resp.put("message", "Detection Added successfully");
+    	    }
+        return  ResponseEntity.ok(resp);
     }
     
     @PostMapping("/detection")
