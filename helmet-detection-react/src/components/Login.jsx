@@ -28,7 +28,7 @@ const Login = () => {
     }
 
     if (password !== confirmPassword) {
-      alert("Confirm password does not match.");
+    alert("Confirm password does not match.");
       return;
     }
 

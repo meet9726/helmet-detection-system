@@ -74,5 +74,40 @@ POST /api/auth/login
 >git commit -m "Initial commit: React frontend + Spring Boot backend"
 >git push origin main
 
+//overall dev Architecture
+
+CCTV Camera (RTSP Stream)
+        │
+        ▼
+Python AI Service (YOLOv8 Helmet Detection)
+        │
+Detect Person + Helmet
+        │
+If No Helmet
+        │
+Capture Frame (Screenshot)
+        │
+Call Spring Boot API
+POST /api/violations
+        │
+Save Image + Data
+        │
+React Dashboard shows violation
 
 
+//production Architecture
+CCTV → Python AI Service
+           │
+           │ REST
+           ▼
+Spring Boot Backend
+           │
+           ▼
+Database + Image Storage
+           │
+           ▼
+React Dashboard (Live Violations)
+
+
+//pythone program run command 
+python detect_helmet.py
